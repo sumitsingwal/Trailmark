@@ -1,0 +1,101 @@
+# Builds the installers and publishes them as a GitHub Release.
+#
+#   Release:   bump "version" in package.json, commit, then
+#              git tag v0.1.0 && git push origin v0.1.0
+#   Try it:    Actions → Release → Run workflow. Builds the installers and keeps them
+#              as workflow artifacts for a week, without creating a release.
+#
+# One job per platform and architecture, because the bundled Chromium is whatever
+# `playwright install` fetched for the machine doing the build (see electron-builder.yml).
+#
+# Builds are unsigned until certificates exist (CLAUDE.md §14). To sign, add the
+# CSC_* / APPLE_* variables listed in electron-builder.yml as repository secrets and
+# pass them in the env of the "Build installer" step.
+
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS (Apple Silicon)
+            os: macos-15
+            script: dist:mac
+          - name: macOS (Intel)
+            os: macos-15-intel
+            script: dist:mac
+          - name: Windows
+            os: windows-latest
+            script: dist:win
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Check the tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match package.json version ${version}"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install chromium
+
+      # --publish never: electron-builder would otherwise try to publish on its own
+      # when it sees a tag in CI. The release job below does the publishing.
+      - name: Build installer
+        run: npm run ${{ matrix.script }} -- --publish never
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          path: |
+            release/*.dmg
+            release/*.exe
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Publish release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          pattern: installer-*
+          merge-multiple: true
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" installers/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "Trailmark ${GITHUB_REF_NAME}" \
+            --generate-notes

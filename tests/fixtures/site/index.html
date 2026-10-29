@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fixture — Sign in</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Sign in</h1>
+      <form id="login" action="/dashboard.html" method="get">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" />
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" />
+
+        <label for="card">Card number</label>
+        <input id="card" name="card" type="text" autocomplete="cc-number" />
+
+        <button type="submit" name="signin" class="btn btn-primary">Sign In</button>
+      </form>
+
+      <!-- Two buttons with identical classes: locator work in Phase 2 must tell them apart. -->
+      <div class="actions">
+        <button class="btn ghost" type="button">Help</button>
+        <button class="btn ghost" type="button">Contact</button>
+      </div>
+    </main>
+  </body>
+</html>

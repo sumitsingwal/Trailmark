@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    // DOM is present because src/recorder/injected runs inside the recorded page,
+    // even though it is built and shipped from the Node side of the app.
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    // Relative imports carry their .ts extension so Node can run recorder files
+    // directly (npm run record); the bundler is happy either way.
+    "allowImportingTsExtensions": true,
+    // Node runs these files by stripping types, which only works if no syntax needs
+    // emitting (no enums, namespaces, or constructor parameter properties).
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
+    "paths": { "@shared/*": ["./src/shared/*"] }
+  },
+  "include": [
+    "src/export/**/*.ts",
+    "src/main/**/*.ts",
+    "src/preload/**/*.ts",
+    "src/recorder/**/*.ts",
+    "src/storage/**/*.ts",
+    "src/shared/**/*.ts",
+    "tests/**/*.ts",
+    "electron.vite.config.ts",
+    "vitest.config.ts"
+  ]
+}

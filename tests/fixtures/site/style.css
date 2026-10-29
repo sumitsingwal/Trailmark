@@ -1,0 +1,24 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem;
+  max-width: 40rem;
+}
+label {
+  display: block;
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+input[type='text'],
+input[type='password'],
+select {
+  display: block;
+  padding: 0.35rem;
+  min-width: 16rem;
+}
+button {
+  margin-top: 1rem;
+  padding: 0.4rem 0.9rem;
+}
+fieldset {
+  margin-top: 1rem;
+}

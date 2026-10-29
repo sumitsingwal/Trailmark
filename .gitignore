@@ -1,0 +1,29 @@
+node_modules/
+out/
+release/
+dist/
+*.tsbuildinfo
+
+.DS_Store
+Thumbs.db
+
+.env
+.env.local
+
+# Recorded walkthroughs and screenshots must never reach the repo —
+# they can contain customer-like test data.
+recordings/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Chromium copied in for packaging (~150MB, platform-specific)
+vendor/
+
+# Rendered icon variants; regenerate with npm run icon
+resources/icon-variants/
+
+# Code-signing certificates; signing reads them from environment variables only.
+*.p12
+*.pfx

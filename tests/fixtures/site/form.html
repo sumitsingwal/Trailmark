@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fixture — Order form</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Order form</h1>
+
+      <form id="order">
+        <label for="qty">Quantity</label>
+        <input id="qty" name="qty" type="text" value="1" />
+
+        <label for="country">Country</label>
+        <select id="country" name="country">
+          <option value="">Choose…</option>
+          <option value="uk">United Kingdom</option>
+          <option value="in">India</option>
+        </select>
+
+        <label><input type="checkbox" id="express" name="express" /> Express delivery</label>
+
+        <fieldset>
+          <legend>Payment</legend>
+          <label><input type="radio" name="pay" value="card" id="pay-card" /> Card</label>
+          <label><input type="radio" name="pay" value="invoice" id="pay-invoice" /> Invoice</label>
+        </fieldset>
+
+        <!-- Text-only button: no id, no name. -->
+        <button type="button" data-testid="add-line">Add line</button>
+      </form>
+
+      <!-- Dynamically grown list: Phase 2 locator tests need index-dependent elements. -->
+      <ul id="lines"></ul>
+
+      <!-- Generated-looking classes: must be recognised as unstable, not offered. -->
+      <div class="panel css-1q2w3e">
+        <button type="button" class="sc-bdVaJa Button_root__2Ab3x">Apply discount</button>
+      </div>
+
+      <!-- Two forms with same-named fields: an unanchored locator would be ambiguous. -->
+      <form id="billing">
+        <label for="billing-city">City</label>
+        <input id="billing-city" name="city" type="text" />
+        <button type="submit" class="btn">Save</button>
+      </form>
+      <form id="shipping">
+        <label for="shipping-city">City</label>
+        <input id="shipping-city" name="city" type="text" />
+        <button type="submit" class="btn">Save</button>
+      </form>
+
+      <!-- Open shadow root: XPath cannot cross the boundary. -->
+      <div id="widget-host"></div>
+
+      <iframe id="notes" src="/notes.html" title="Notes" width="320" height="120"></iframe>
+
+      <script src="/app.js"></script>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+appId: com.sumitsingwal.trailmark
+productName: Trailmark
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - out/**
+  - package.json
+  - '!**/*.map'
+
+# Chromium ships inside the app. Without this the installer depends on a Playwright
+# cache that only exists on the machine that built it. Populated by
+# `npm run bundle:chromium`, which the dist scripts run first.
+extraResources:
+  - from: vendor/ms-playwright
+    to: ms-playwright
+
+# better-sqlite3 ships a .node binary that cannot be loaded from inside an asar archive.
+asarUnpack:
+  - '**/node_modules/better-sqlite3/**'
+
+# Architecture is deliberately not listed, so electron-builder targets the host.
+# The bundled Chromium is whatever `playwright install` fetched for THIS machine, so
+# building an Intel dmg on an Apple Silicon Mac would ship an arm64 browser that
+# cannot run. An Intel or Windows build has to be produced on that platform, or in CI.
+mac:
+  category: public.app-category.developer-tools
+  icon: resources/icon.icns
+  # The arch is always in the name: the default leaves it off for x64, and the Intel
+  # and Apple Silicon dmgs sit side by side on a release page.
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+  target:
+    - target: dmg
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: resources/entitlements.mac.plist
+  entitlementsInherit: resources/entitlements.mac.plist
+
+win:
+  # electron-builder derives the .ico from this PNG.
+  icon: resources/icon.png
+  target:
+    - target: nsis
+
+nsis:
+  # The default, "Trailmark Setup 0.1.0.exe", has spaces that GitHub rewrites on upload.
+  artifactName: ${productName}-${version}-win-${arch}-setup.${ext}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+
+# Signing and notarisation are driven entirely by environment variables, so no
+# credential is ever committed here. With none set, electron-builder produces an
+# unsigned build that warns on first launch.
+#
+#   macOS:    CSC_LINK (path or base64 of a .p12), CSC_KEY_PASSWORD
+#             APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID  (for notarising)
+#   Windows:  CSC_LINK, CSC_KEY_PASSWORD  (a code-signing .pfx)
+#
+# Set `notarize: true` under `mac:` once an Apple Developer account is available;
+# it is off by default because it fails the build when credentials are absent.

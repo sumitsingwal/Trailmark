@@ -1,6 +1,6 @@
 {
   "name": "trailmark",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Record a web walkthrough and export it as a test-case clickpath",
   "main": "./out/main/index.js",
   "author": "Sumit Singwal",

@@ -388,6 +388,7 @@ Skipped, deliberately:
 | 2026-10-29 | Marking is refused while that recording is live | The form may not have been submitted yet, so the URL carrying the value would arrive after the redaction ran |
 | 2026-10-29 | Installers are built by GitHub Actions (`.github/workflows/release.yml`) on a `v*` tag push and attached to a GitHub Release; the repository is public | One runner per platform and architecture (Apple Silicon Mac, Intel Mac, Windows) is the only way to get each installer the right bundled Chromium without owning all three machines. Installers never go into git history |
 | 2026-10-29 | The release fails if the tag does not match `package.json`'s version | Otherwise a `v0.2.0` release could ship installers that call themselves 0.1.0 |
+| 2026-10-29 | macOS builds are ad-hoc signed (`identity: '-'`) until a Developer ID exists | The v0.1.0 dmg was reported "damaged and can't be opened": with signing skipped, Electron's stub signature no longer matched the bundle, and Apple Silicon refuses that outright. Ad-hoc signing verifies cleanly, so a download gets the normal "Open Anyway" path instead |
 | 2026-10-29 | Installer file names always carry platform and arch (`Trailmark-0.1.0-mac-arm64.dmg`, `Trailmark-0.1.0-win-x64-setup.exe`) | electron-builder's default leaves the arch off the Intel dmg, which is ambiguous next to the arm64 one on a release page |
 
 ## 17. Removed Functionality

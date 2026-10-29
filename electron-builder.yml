@@ -32,6 +32,12 @@ mac:
   artifactName: ${productName}-${version}-mac-${arch}.${ext}
   target:
     - target: dmg
+  # "-" is an ad-hoc signature: no certificate, no cost. Without any signature the app
+  # keeps Electron's stub one, which no longer matches the packaged bundle, and Apple
+  # Silicon Macs refuse a downloaded copy as "damaged" with no way to open it. Ad-hoc
+  # downgrades that to the ordinary unidentified-developer prompt. Replace with the
+  # Developer ID identity (or remove, and set CSC_LINK) once a certificate exists.
+  identity: '-'
   hardenedRuntime: true
   gatekeeperAssess: false
   entitlements: resources/entitlements.mac.plist
